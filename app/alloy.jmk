@@ -6,10 +6,10 @@ logger.info('building project at '+event.projectDir);
 });
 
 task("post:compile",function(event,logger){
-path = require('path'),fs = require('fs');
+//path = require('path'),fs = require('fs');
 
-var s ="/Users/aaronksaunders/Documents/workspace/alloy/acs_alloy_adapter_test/app/sync/acs.js";
-var d = "/Users/aaronksaunders/Documents/workspace/alloy/acs_alloy_adapter_test/Resources/alloy/sync/acs.js";
+//var s ="/Users/aaronksaunders/Documents/workspace/alloy/acs_alloy_adapter_test/app/sync/acs.js";
+//var d = "/Users/aaronksaunders/Documents/workspace/alloy/acs_alloy_adapter_test/Resources/alloy/sync/acs.js";
 
-fs.writeFileSync(d, fs.readFileSync(s, 'utf8'));
+//fs.writeFileSync(d, fs.readFileSync(s, 'utf8'));
 });
