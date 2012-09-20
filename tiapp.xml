@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?><ti:app xmlns:ti="http://ti.appcelerator.org">
+    <property name="acs-oauth-secret-production" type="string">j6zLXoo0HOmzXWRUM9g81jpp8sNPksQl</property>
+    <property name="acs-oauth-key-production" type="string">DxzWk3OQnVQFzD7T7vdRVx1Hgqekc6Yy</property>
+    <property name="acs-api-key-production" type="string">O5Ey43jbYKvulqfbIYZCx8c4GLSlM1zG</property>
+    <property name="acs-oauth-secret-development" type="string">r6awfD4wMvUlmpYMRiasn2q01LBptHAw</property>
+    <property name="acs-oauth-key-development" type="string">KAd9BD0PkZ28hkRm4OmK0qe5MVWhXs6W</property>
+    <property name="acs-api-key-development" type="string">Sp2CyToFWD0djAYx9d8M3Kx7m4JzzQwV</property>
+    <deployment-targets>
+        <target device="mobileweb">false</target>
+        <target device="iphone">true</target>
+        <target device="ipad">true</target>
+        <target device="android">true</target>
+        <target device="blackberry">false</target>
+    </deployment-targets>
+    <sdk-version>2.1.2.GA</sdk-version>
+    <id>ci.acs.adaptertest</id>
+    <name>acs_alloy_adapter_test</name>
+    <version>1.0</version>
+    <publisher>aaronksaunders</publisher>
+    <url>http://www.clearlyinnovative.com</url>
+    <description>not specified</description>
+    <copyright>2012 by aaronksaunders</copyright>
+    <icon>appicon.png</icon>
+    <persistent-wifi>false</persistent-wifi>
+    <prerendered-icon>false</prerendered-icon>
+    <statusbar-style>default</statusbar-style>
+    <statusbar-hidden>false</statusbar-hidden>
+    <fullscreen>false</fullscreen>
+    <navbar-hidden>false</navbar-hidden>
+    <analytics>true</analytics>
+    <guid>f8a6fcfc-ff04-4596-99dd-56de9eff4ea5</guid>
+    <property name="ti.ui.defaultunit">system</property>
+    <iphone>
+        <orientations device="iphone">
+            <orientation>Ti.UI.PORTRAIT</orientation>
+        </orientations>
+        <orientations device="ipad">
+            <orientation>Ti.UI.PORTRAIT</orientation>
+            <orientation>Ti.UI.UPSIDE_PORTRAIT</orientation>
+            <orientation>Ti.UI.LANDSCAPE_LEFT</orientation>
+            <orientation>Ti.UI.LANDSCAPE_RIGHT</orientation>
+        </orientations>
+    </iphone>
+    <android xmlns:android="http://schemas.android.com/apk/res/android"/>
+    <mobileweb>
+        <precache/>
+        <splash>
+            <enabled>true</enabled>
+            <inline-css-images>true</inline-css-images>
+        </splash>
+        <theme>default</theme>
+    </mobileweb>
+    <modules>
+        <module platform="commonjs" version="2.3.0">ti.cloud</module>
+    <module platform="android" version="1.0">ti.physicalSizeCategory</module>
+</modules>
+<plugins><plugin version="1.0">ti.alloy</plugin>
+</plugins>
+</ti:app>
