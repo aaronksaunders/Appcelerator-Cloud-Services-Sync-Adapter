@@ -29,6 +29,45 @@ simple stuff, login a user
 
 creating an object, works just like the books demo provided; here is using the ACS Place object
 
+First lets look at the changes I made to the model JSON file, this is for the places object
+
+	{
+	    "columns": {
+	        "active": "boolean"
+	    },
+	    "defaults": {},
+	    "adapter": {
+	        "type": "acs",
+	    },
+	    "settings": {
+	        "object_name": "places", 
+	        "object_method": "Places"
+	    }
+
+	}
+
+and this is for the user object
+
+	{
+	    "columns": {
+	        "active": "boolean"
+	    },
+	    "defaults": {},
+	    "adapter": {
+	        "type": "acs",
+	    },
+	    "settings": {
+	        "object_name": "users",
+	        "object_method": "Users"
+	    }
+	}
+	
+if you notice, the main edit is setting the adapter to acs and then specifying the object name. I know there is a 
+cleaner way to do this, ie derive it from the file name, but this is just me hacking!! I will get to that later
+
+
+And finally this is how it works...
+	
 	var params = {
 		"name" : "Appcelerator Cloud Services",
 		"created_at" : "2011-03-22T21:12:14+0000",
