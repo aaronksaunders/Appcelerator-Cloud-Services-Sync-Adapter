@@ -72,3 +72,31 @@ creating an object, works just like the books demo provided; here is using the A
 		});
 		aPlace.fetch();
 	}
+	
+You are going to want to hop on over ro app/sync/acs.js to see the beginnings of the code for the adapter
+
+The code for the user model is more interesting since I needed to extend the object to support all of the 
+special case methods that the user object supports
+
+
+	function login(_login, _password, _opts) {
+		var self = this;
+		this.config.Cloud.Users.login({
+			login : _login,
+			password : _password
+		}, function(e) {
+			if (e.success) {
+				var user = e.users[0];
+				Ti.API.info('Logged in! You are now logged in as ' + user.id);
+				
+				// return a newly created user object here!!
+				_opts.success && _opts.success(new model(user));
+			} else {
+				Ti.API.error(e);
+				// sorry.. error message
+				_opts.error && _opts.error((e.error && e.message) || e);
+			}
+		});
+	}
+
+The rest of the model follows the same path; check it out and tell me what you think
