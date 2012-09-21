@@ -32,9 +32,12 @@ if (false) {
 		}
 	});
 } else {
-	testSearchUsers();
+	testQueryUsers();
 }
 
+//
+// full text search using q parameter
+//
 function testSearchUsers() {
 
 	var userCollection = Alloy.createCollection('User');
@@ -53,6 +56,27 @@ function testSearchUsers() {
 		}
 	});
 
+}
+
+//
+// searching the user objects by using
+function testQueryUsers() {
+	var userCollection = Alloy.createCollection("User");
+	userCollection.on("fetch", function() {
+		Ti.API.info(" users..." + JSON.stringify(userCollection));
+	}), userCollection.fetch({
+		data : {
+			where : JSON.stringify({
+				"last_name" : "UserOne"
+			})
+		},
+		success : function(collection, response) {
+			Ti.API.info("success " + JSON.stringify(collection));
+		},
+		error : function(collection, response) {
+			Ti.API.error("error " + JSON.stringify(collection));
+		}
+	});
 }
 
 function testCreateUser() {

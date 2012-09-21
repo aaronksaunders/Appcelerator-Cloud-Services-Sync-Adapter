@@ -77,8 +77,8 @@ function getObject(_model, _opts) {
 
 function getObjects(_model, _opts) {
 	var object_name = _model.config.settings.object_name, object_method = Cloud[_model.config.settings.object_method];
-	Ti.API.info(" querying for all objects of type " + _model.config.settings.object_name);
-	object_method.query(function(e) {
+	Ti.API.info(" querying for all objects of type " + _model.config.settings.object_name + " " + _opts.data.q);
+	object_method.query((_opts.data || {}), function(e) {
 		if (e.success) {
 			if (e[object_name].length !== 0) {
 				var retArray = [];
