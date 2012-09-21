@@ -14,18 +14,66 @@ var params = {
 	"lat" : 37.782227,
 	"lng" : -122.393159
 }
-var aUser = Alloy.createModel('User');
-aUser.login("testuserone", "password", {
-	success : function(_d) {
-		Ti.API.info(' SUCCESS ' + JSON.stringify(_d));
-		Ti.API.info(' model stringified ' + _d.get("username"));
+if (false) {
+	var aUser = Alloy.createModel('User');
+	aUser.login("testuserone", "password", {
+		success : function(_d) {
+			Ti.API.info(' SUCCESS ' + JSON.stringify(_d));
+			Ti.API.info(' model stringified ' + _d.get("username"));
 
-		Ti.API.info(' stored session ' + _d.retrieveStoredSession());
-	},
-	error : function(_e) {
-		Ti.API.info(' ERROR ');
+			Ti.API.info(' stored session ' + _d.retrieveStoredSession());
+
+			testPhotos();
+
+			testCreateUser()
+		},
+		error : function(_e) {
+			Ti.API.info(' ERROR ');
+		}
+	});
+} else {
+	testSearchUsers();
+}
+
+function testSearchUsers() {
+
+	var userCollection = Alloy.createCollection('User');
+	userCollection.on("fetch", function() {
+		Ti.API.info(' users...' + JSON.stringify(userCollection));
+	});
+	userCollection.fetch({
+		data : {
+			q : "UserTwo"
+		},
+		success : function(collection, response) {
+			Ti.API.info('success ' + JSON.stringify(collection));
+		},
+		error : function(collection, response) {
+			Ti.API.error('error ' + JSON.stringify(collection));
+		}
+	});
+
+}
+
+function testCreateUser() {
+	var params = {
+		username : "testusertwo",
+		password : "password",
+		password_confirmation : "password",
+		first_name : "Test",
+		last_name : "UserTwo"
 	}
-});
+	var aUser = Alloy.createModel('User', params);
+	aUser.save({}, {
+		success : function(_d) {
+			Ti.API.info('success ' + JSON.stringify(_d));
+		},
+		error : function(_d) {
+			Ti.API.error('error ' + JSON.stringify(_d));
+		}
+	})
+
+}
 
 function testPlaces() {
 	//aPlace = Alloy.createModel('Place', params);
@@ -41,4 +89,21 @@ function testPlaces() {
 		id : "50592aab18897b614e0092c2"
 	});
 	aPlace.fetch();
+}
+
+function testPhotos() {
+	var aPhoto, photoCollection;
+	var params = {
+		photo : Ti.Filesystem.getFile('bryce09122010a.jpg').read(),
+		'photo_sync_sizes[]' : 'small_240'
+	}
+	aPhoto = Alloy.createModel('Photo', params);
+	aPhoto.save();
+
+	photoCollection = Alloy.createCollection('Photo');
+	photoCollection.on("fetch", function() {
+		Ti.API.info(' photos...' + JSON.stringify(places));
+	});
+	photoCollection.fetch();
+
 }
