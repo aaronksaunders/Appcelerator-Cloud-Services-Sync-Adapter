@@ -17,10 +17,12 @@ function Sync(model, method, opts) {
         case "create":
             // stick attributes into the params variable
             var params = {};
-            params['fields'] = model.toJSON();
             // if custom object then set the classname in params variable
             if (model.config.settings.object_method === "Objects") {
+                params['fields'] = model.toJSON();
                 params['classname'] = object_name;
+            } else {
+                params = model.toJSON();
             }
             object_method.create(params, function(e) {
                 if (e.success) {
