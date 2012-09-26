@@ -138,4 +138,54 @@ special case methods that the user object supports
 		});
 	}
 
+Object Searching and Querying
+-
+So we keep it pretty simple here and pass in the parameters as part of the options in `data` as a hash
+
+create the user collection like you normally do
+
+    var userCollection = Alloy.createCollection('User');
+
+Now we do a fetch, but we pass in the query string in as a parameter; we are saying do a full text search on the
+term `UserTwo`
+
+		userCollection.fetch({
+			data : {
+				q : "UserTwo"
+			},
+			success : function(collection, response) {
+				Ti.API.info('success ' + JSON.stringify(collection));
+			},
+			error : function(collection, response) {
+				Ti.API.error('error ' + JSON.stringify(collection));
+			}
+		});
+
+We pass in a `success` and `error` callback that will give us the `(collection, response)` as results
+
+For
+
+create the user collection like you normally do
+
+    var userCollection = Alloy.createCollection('User');
+
+Now we do a fetch, but we pass in the query string in as a parameter; we are saying find all users with the  `last_name` field of `UserTwo`
+
+		userCollection.fetch({
+			data : {
+				where : JSON.stringify({
+					"last_name" : "UserOne"
+				})
+			},
+			success : function(collection, response) {
+				Ti.API.info('success ' + JSON.stringify(collection));
+			},
+			error : function(collection, response) {
+				Ti.API.error('error ' + JSON.stringify(collection));
+			}
+		});
+
+We pass in a `success` and `error` callback that will give us the `(collection, response)` as results which is the same as the previous example. Please note that the `where` parameter is a JSON object that has been converted 
+to a string
+
 The rest of the model follows the same path; check it out and tell me what you think
