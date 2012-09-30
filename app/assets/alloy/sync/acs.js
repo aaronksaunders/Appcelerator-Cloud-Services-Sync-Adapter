@@ -1,5 +1,5 @@
 function S4() {
-	return ((1 + Math.random()) * 65536 | 0).toString(16).substring(1);
+    return ((1 + Math.random()) * 65536 | 0).toString(16).substring(1);
 }
 
 function guid() {
@@ -58,7 +58,7 @@ function Sync(model, method, opts) {
 			Ti.API.info(' updating object with id ' + model.id);
 
 			var params = model.toJSON(), id_name = object_name.replace(/s+$/, "") + "_id";
-			params[id_name] = model.id, object_method.update(params, function(e) {
+			object_method.update(params, function(e) {
 				if (e.success) {
 					model.meta = e.meta;
 					opts.success && opts.success(e[object_name][0]), model.trigger("fetch");
