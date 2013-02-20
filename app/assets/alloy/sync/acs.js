@@ -10,7 +10,7 @@ function InitAdapter(config) {
     Cloud = require("ti.cloud"), Cloud.debug = !0, config.Cloud = Cloud;
 }
 
-function Sync(model, method, opts) {
+function Sync( method, model, opts) {
     var name = model.config.adapter.name, settings = model.config.settings, data = model.config.data, object_name = model.config.settings.object_name, object_method = Cloud[model.config.settings.object_method];
     Ti.API.info("method " + method);
     switch (method) {
