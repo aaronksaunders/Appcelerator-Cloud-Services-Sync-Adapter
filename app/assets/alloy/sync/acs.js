@@ -26,19 +26,17 @@ function Sync(model, method, opts) {
             }
             object_method.create(params, function(e) {
                 if (e.success) {
-                    var m = new model.config.Model(e[object_name][0]);
+                    model.meta = e.meta;
                     opts.success && opts.success(e[object_name][0]), model.trigger("fetch");
                     return;
                 }
-                opts.error && opts.error();
+                Ti.API.error(e);
+                opts.error && opts.error(e.error && e.message || e);
             });
             break;
         case "read":
             var id_name = object_name.replace(/s+$/, "") + "_id", params = {};
             params[id_name] = model.id = opts.id || model.id;
-
-            var id_name = "";
-            var params = {};
 
             if (model.config.settings.object_method === "Objects") {
                 !opts.data ? opts.data = {} : opts.data;
@@ -46,7 +44,7 @@ function Sync(model, method, opts) {
                 opts.data['id'] = model.id;
             } else {
                 id_name = object_name.replace(/s+$/, "") + "_id";
-                opts.data[id_name] = model.id;
+                model.id && (opts.data[id_name] = model.id);
             }
 
             if (model.id) {
@@ -58,14 +56,17 @@ function Sync(model, method, opts) {
             }
             break;
         case "update":
+            Ti.API.info(' updating object with id ' + model.id);
+
             var params = model.toJSON(), id_name = object_name.replace(/s+$/, "") + "_id";
-            params[id_name] = model.id, object_method.update(params, function(e) {
+            object_method.update(params, function(e) {
                 if (e.success) {
-                    var m = new model.config.Model(e[object_name][0]);
+                    model.meta = e.meta;
                     opts.success && opts.success(e[object_name][0]), model.trigger("fetch");
                     return;
                 }
-                opts.error && opts.error();
+                Ti.API.error(e);
+                opts.error && opts.error(e.error && e.message || e);
             }), model.trigger("fetch");
             break;
         case "delete":
@@ -82,10 +83,12 @@ function Sync(model, method, opts) {
 
             object_method.remove(params, function(e) {
                 if (e.success) {
+                    model.meta = e.meta;
                     opts.success && opts.success({}), model.trigger("fetch");
                     return;
                 }
-                opts.error && opts.error();
+                Ti.API.error(e);
+                opts.error && opts.error(e.error && e.message || e);
             });
     }
 }
@@ -98,12 +101,13 @@ function getObject(_model, _opts) {
     object_method.show(_opts.data, function(e) {
         if (e.success) {
             if (_model.id) {
-                var m = new _model.config.Model(e[object_name][0]);
+                _model.meta = e.meta;
                 _opts.success && _opts.success(e[object_name][0]), _model.trigger("fetch");
                 return;
             }
         } else {
-            _opts.error && _opts.error();
+            Ti.API.error(e);
+            _opts.error && _opts.error(e.error && e.message || e);
         }
     });
 }
@@ -120,14 +124,16 @@ function getObjects(_model, _opts) {
             if (e[object_name].length !== 0) {
                 var retArray = [];
                 for (var i in e[object_name]) {
-                    var m = new _model.config.Model(e[object_name][i]);
                     retArray.push(e[object_name][i]);
                 }
+                _model.meta = e.meta;
                 _opts.success && _opts.success(retArray), _model.trigger("fetch");
                 return;
             }
-        } else
-            opts.error && opts.error();
+        } else {
+            Ti.API.error(e);
+            _opts.error && _opts.error(e.error && e.message || e);
+        }
     });
 }
 
@@ -143,14 +149,16 @@ function searchObjects(_model, _opts) {
             if (e[object_name].length !== 0) {
                 var retArray = [];
                 for (var i in e[object_name]) {
-                    var m = new _model.config.Model(e[object_name][i]);
                     retArray.push(e[object_name][i]);
                 }
+                _model.meta = e.meta;
                 _opts.success && _opts.success(retArray), _model.trigger("fetch");
                 return;
             }
-        } else
-            opts.error && opts.error();
+        } else {
+            Ti.API.error(e);
+            _opts.error && _opts.error(e.error && e.message || e);
+        }
     });
 }
 
