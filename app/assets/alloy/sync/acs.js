@@ -59,6 +59,13 @@ function Sync( method, model, opts) {
             Ti.API.info(' updating object with id ' + model.id);
 
             var params = model.toJSON(), id_name = object_name.replace(/s+$/, "") + "_id";
+            params[id_name] = model.id = opts.id || model.id;
+            
+            if(model.config.settings.object_method === "Reviews"){
+				var reviewdObject = model.get('reviewed_object');
+            	params[reviewdObject.type.toLowerCase()+'_id'] = reviewdObject.id;
+            }
+            
             object_method.update(params, function(e) {
                 if (e.success) {
                     model.meta = e.meta;
@@ -81,6 +88,11 @@ function Sync( method, model, opts) {
                 params[id_name] = model.id;
             }
 
+			if(model.config.settings.object_method === "Reviews"){
+				var reviewdObject = model.get('reviewed_object');
+            	params[reviewdObject.type.toLowerCase()+'_id'] = reviewdObject.id;
+            }
+            
             object_method.remove(params, function(e) {
                 if (e.success) {
                     model.meta = e.meta;
