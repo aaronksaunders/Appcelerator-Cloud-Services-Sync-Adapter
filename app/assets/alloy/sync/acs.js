@@ -38,8 +38,8 @@ function Sync( method, model, opts) {
             var id_name = object_name.replace(/s+$/, "") + "_id", params = {};
             params[id_name] = model.id = opts.id || model.id;
 
+	    !opts.data ? opts.data = {} : opts.data;
             if (model.config.settings.object_method === "Objects") {
-                !opts.data ? opts.data = {} : opts.data;
                 opts.data['classname'] = object_name;
                 opts.data['id'] = model.id;
             } else {
