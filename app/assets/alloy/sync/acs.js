@@ -133,15 +133,13 @@ function getObjects(_model, _opts) {
     Ti.API.info(" querying for all objects of type " + _model.config.settings.object_name + " " + (_opts.data && _opts.data.q));
     object_method.query((_opts.data || {}), function(e) {
         if (e.success) {
-            if (e[object_name].length !== 0) {
-                var retArray = [];
-                for (var i in e[object_name]) {
-                    retArray.push(e[object_name][i]);
-                }
-                _model.meta = e.meta;
-                _opts.success && _opts.success(retArray), _model.trigger("fetch");
-                return;
+            var retArray = [];
+            for (var i in e[object_name]) {
+                retArray.push(e[object_name][i]);
             }
+            _model.meta = e.meta;
+            _opts.success && _opts.success(retArray), _model.trigger("fetch");
+            return;
         } else {
             Ti.API.error(e);
             _opts.error && _opts.error(e.error && e.message || e);
@@ -158,15 +156,13 @@ function searchObjects(_model, _opts) {
     Ti.API.info(" searching for all objects of type " + _model.config.settings.object_name + " " + _opts.data.q);
     object_method.search(_opts.data, function(e) {
         if (e.success) {
-            if (e[object_name].length !== 0) {
-                var retArray = [];
-                for (var i in e[object_name]) {
-                    retArray.push(e[object_name][i]);
-                }
-                _model.meta = e.meta;
-                _opts.success && _opts.success(retArray), _model.trigger("fetch");
-                return;
+            var retArray = [];
+            for (var i in e[object_name]) {
+                retArray.push(e[object_name][i]);
             }
+            _model.meta = e.meta;
+            _opts.success && _opts.success(retArray), _model.trigger("fetch");
+            return;
         } else {
             Ti.API.error(e);
             _opts.error && _opts.error(e.error && e.message || e);
