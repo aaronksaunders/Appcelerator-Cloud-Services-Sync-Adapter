@@ -1,4 +1,12 @@
+[![Appcelerator Titanium](http://www-static.appcelerator.com/badges/titanium-git-badge-sq.png)](http://appcelerator.com/titanium/) [![Appcelerator Alloy](http://www-static.appcelerator.com/badges/alloy-git-badge-sq.png)](http://appcelerator.com/alloy/)
+
 New and improved ACS Alloy Module
+===
+_Concepts here are meant to be a introductory guide to concepts covered in my book on Appcelerator Alloy and Appcelerator Cloud Services_
+
+![text](https://raw.githubusercontent.com/aaronksaunders/testInClass/master/screens/small_book_cover.png)
+
+#####[Available On Amazon.com](http://www.amazon.com/Building-Cross-Platform-Titanium-Appcelerator-Services/dp/1118673255)
 ===
 This is very early hacking, late night work with lots of help and insight from Russ and the Alloy Team.
 Doing this work to better familiarize myself with the platform and get stuff done quicker, faster and 
