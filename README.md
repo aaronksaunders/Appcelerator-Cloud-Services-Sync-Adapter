@@ -65,12 +65,12 @@ and this is for the user object
 	        "type": "acs",
 	    },
 	    "settings": {
-	        "object_name": "users",
+	        "object_name": "users", // <-- MUST BE SET TO ACS OBJECT
 	        "object_method": "Users"
 	    }
 	}
 	
-if you notice, the main edit is setting the adapter to acs and then specifying the object name. I know there is a 
+if you notice, the *main edit is setting the adapter to acs and then specifying the object name*. I know there is a 
 cleaner way to do this, ie derive it from the file name, but this is just me hacking!! I will get to that later
 
 
