@@ -8,6 +8,43 @@ _Concepts here are meant to be a introductory guide to concepts covered in my bo
 
 #####[Available On Amazon.com](http://www.amazon.com/Building-Cross-Platform-Titanium-Appcelerator-Services/dp/1118673255)
 ===
+#### NEW 3/20/2015 - Promise Support for ACS Queries
+We all have become accustom to using promises to avoid the callback hell so here we have an example of an ACS adapter that supports promises using the $q javascript library.
+
+So now you can query your custom object like this
+```Javascript
+/**
+* gets books and returns a promise
+*/
+function getBooks() {
+	var books = Alloy.createCollection('Book');
+	return books.fetch();
+}
+
+// need a user object to login with
+var aUser = Alloy.createModel('User');
+
+// notice the call to the extended function with no success or error
+// callbacks, they are handled by the promise structure
+aUser.login("testuserone", "password").then(function(_response) {
+	// successful login here!!
+	Ti.API.info(' Success:Login, with Promise\n ' + JSON.stringify(_response, null, 2));
+	
+	// now query for the books and the success will be handled by 
+	// the next `then` function below, else it falls thru to the 
+	// error 
+	return getBooks(); //<-- returns a promise also!
+}).then(function(_bookResp) {
+    // here we handle the successful book query
+	Ti.API.info(' Success:Books, with Promise\n ' + JSON.stringify(_bookResp, null, 2));
+}, function(_error) {
+    // ANY errors is the promise chain will fall thru to here
+	Ti.API.error(' ERROR ' + JSON.stringify(_error));
+});
+```
+This approach is MUCH cleaner that the old callback approach ,give it a try... the adapter still support both approaches.
+
+===
 This is very early hacking, late night work with lots of help and insight from Russ and the Alloy Team.
 Doing this work to better familiarize myself with the platform and get stuff done quicker, faster and 
 better for my clients.
