@@ -197,7 +197,7 @@ function testPhotos() {
 
     photoCollection = Alloy.createCollection('Photo');
     photoCollection.on("fetch", function() {
-        Ti.API.info(' photos...' + JSON.stringify(places));
+        Ti.API.info(' photos...' + JSON.stringify(photoCollection));
     });
     photoCollection.fetch();
 
