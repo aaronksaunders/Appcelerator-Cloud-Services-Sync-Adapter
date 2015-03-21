@@ -9,7 +9,10 @@ _Concepts here are meant to be a introductory guide to concepts covered in my bo
 #####[Available On Amazon.com](http://www.amazon.com/Building-Cross-Platform-Titanium-Appcelerator-Services/dp/1118673255)
 ===
 #### NEW 3/20/2015 - Promise Support for ACS Queries
-We all have become accustom to using promises to avoid the callback hell so here we have an example of an ACS adapter that supports promises using the $q javascript library.
+
+_Keep a look out for updated video to show use of new adapter here in the [Appcelerator Alloy Video Series](https://www.youtube.com/channel/UCMCcqbJpyL3LAv3PJeYz2bg)_
+
+We all have become acustom to using promises to avoid the callback hell so here we have an example of an ACS adapter that supports promises using the $q javascript library.
 
 So now you can query your custom object like this
 ```Javascript
