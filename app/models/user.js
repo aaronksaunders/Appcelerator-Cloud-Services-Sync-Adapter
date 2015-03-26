@@ -4,7 +4,6 @@ exports.definition = {
 		"columns" : {},
 		"adapter" : {
 			"type" : "acs",
-			"collection_name" : "users"
 		},
 		"settings" : {
 			"object_name" : "users",
@@ -14,6 +13,9 @@ exports.definition = {
 	extendModel : function(Model) {
 		var Q = require('q');
 
+		/**
+		 *
+		 */
 		function logout(_opts) {
 			var self = this;
 			var deferred = Q.defer();
@@ -34,6 +36,10 @@ exports.definition = {
 			return deferred.promise;
 		}
 
+		/**
+		 *
+		 * @param {Object} _opts
+		 */
 		function showMe(_opts) {
 			var self = this;
 			var deferred = Q.defer();
@@ -54,14 +60,26 @@ exports.definition = {
 			return deferred.promise;
 		}
 
+		/**
+		 *
+		 */
 		function hasStoredSession() {
 			return this.config.Cloud.hasStoredSession();
 		}
 
+		/**
+		 *
+		 */
 		function retrieveStoredSession() {
 			return this.config.Cloud.sessionId;
 		}
 
+		/**
+		 *
+		 * @param {Object} _login
+		 * @param {Object} _password
+		 * @param {Object} _opts
+		 */
 		function login(_login, _password, _opts) {
 			var self = this;
 			var deferred = Q.defer();
@@ -90,6 +108,9 @@ exports.definition = {
 			return deferred.promise;
 		}
 
+		/**
+		 *
+		 */
 		function authenticated() {
 			// check for existing user session
 			// check for session before logging in again

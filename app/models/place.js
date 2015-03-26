@@ -4,8 +4,7 @@ exports.definition = {
         "columns" : {},
         "defaults" : {},
         "adapter" : {
-            "type" : "acs",
-            "collection_name" : "places"
+            "type" : "acs"
         },
         "settings" : {
             "object_name" : "places",
