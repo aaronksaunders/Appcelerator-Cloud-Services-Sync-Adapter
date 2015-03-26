@@ -234,7 +234,64 @@ function testCreateUser() {
 	});
 }
 ```
+####Additional Changes Required for Promise Support and proper file placement
 
+* You will need to include the [$q javascript library](https://github.com/kriskowal/q/blob/v1/README.md) in your project. I suggest you create a `lib` folder in the `app` directory and add the file there.
+* You add  the `alloy\sync\acs.js` file to the `lib` folder also, be sure to create the complete folder path.
+* You will need to update your `alloy.js` file to support the models and collections returning the promise from the sync adapter, see `line 10` and `line 36` where we return the result from the sync adapter
+
+The new changes to `alloy.js`, add the lines below to the file
+
+```javascript
+Alloy.C = function(name, modelDesc, model) {
+	var extendObj = {
+		model : model
+	};
+	var config = ( model ? model.prototype.config : {}) || {};
+	var mod;
+	if (config.adapter && config.adapter.type) {
+		mod = require("alloy/sync/" + config.adapter.type);
+		extendObj.sync = function(method, model, opts) {
+			return mod.sync(method, model, opts);
+		};
+	} else
+		extendObj.sync = function(method, model) {
+			Ti.API.warn("Execution of " + method + "#sync() function on a collection that does not support persistence");
+			Ti.API.warn("model: " + JSON.stringify(model.toJSON()));
+		};
+	var Collection = Backbone.Collection.extend(extendObj);
+	Collection.prototype.config = config;
+	_.isFunction(modelDesc.extendCollection) && ( Collection = modelDesc.extendCollection(Collection) || Collection);
+	mod && _.isFunction(mod.afterCollectionCreate) && mod.afterCollectionCreate(Collection);
+	return Collection;
+};
+
+Alloy.M = function(name, modelDesc, migrations) {
+	var config = (modelDesc || {}).config || {};
+	var adapter = config.adapter || {};
+	var extendObj = {};
+	var extendClass = {};
+	var mod;
+	if (adapter.type) {
+		mod = require("alloy/sync/" + adapter.type);
+		extendObj.sync = function(method, model, opts) {
+			return mod.sync(method, model, opts);
+		};
+	} else
+		extendObj.sync = function(method, model) {
+			Ti.API.warn("Execution of " + method + "#sync() function on a model that does not support persistence");
+			Ti.API.warn("model: " + JSON.stringify(model.toJSON()));
+		};
+	extendObj.defaults = config.defaults;
+	migrations && (extendClass.migrations = migrations);
+	mod && _.isFunction(mod.beforeModelCreate) && ( config = mod.beforeModelCreate(config, name) || config);
+	var Model = Backbone.Model.extend(extendObj, extendClass);
+	Model.prototype.config = config;
+	_.isFunction(modelDesc.extendModel) && ( Model = modelDesc.extendModel(Model) || Model);
+	mod && _.isFunction(mod.afterModelCreate) &amp;&amp; mod.afterModelCreate(Model, name);
+	return Model;
+};
+```
 
 
 Object Searching and Querying
