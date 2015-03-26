@@ -54,7 +54,7 @@ Creating an object, works just like the books demo provided; here is using the A
 
 First lets look at the changes I made to the model JSON file, `app/models/place.js` this is for the places object
 ```Javascript
-{
+exports.definition = {
     "columns": {},
     "defaults": {},
     "adapter": {
@@ -68,7 +68,7 @@ First lets look at the changes I made to the model JSON file, `app/models/place.
 ```
 and this is for the user object `app/models/user.js`, make the appropriate edits.
 ```Javascript
-{
+exports.definition = {
     "columns": {},
     "defaults": {},
     "adapter": {
@@ -80,6 +80,22 @@ and this is for the user object `app/models/user.js`, make the appropriate edits
     }
 }
 ```	
+For Custom Objects, we can support them by providing the name of  the custom object in the configuration setting property and then set the object_method. See example of a custom object called book
+```javascript
+exports.definition = {
+    config : {
+    "columns": {},
+    "defaults": {},
+    "adapter": {
+        "type": "acs",
+    },
+    "settings": {
+        "object_name": "book",
+        "object_method": "Objects" //<--indicates a Custom ACS object
+       }
+    }
+}
+```
 If you notice, **the main change to the models file is setting the adapter to acs and then specifying the object name**. I know there is a 
 cleaner way to do this, ie derive it from the file name, but this is an acceptable solution that provide clear self documentation; I will get to that later
 
