@@ -1,9 +1,7 @@
 exports.definition = {
 
 	config : {
-		"columns" : {
-			"active" : "boolean"
-		},
+		"columns" : {},
 		"adapter" : {
 			"type" : "acs",
 			"collection_name" : "users"

@@ -1,9 +1,7 @@
 exports.definition = {
 
     config : {
-        "columns" : {
-            "active" : "boolean"
-        },
+        "columns" : {},
         "defaults" : {},
         "adapter" : {
             "type" : "acs",
@@ -14,21 +12,13 @@ exports.definition = {
         }
     },
 
-    extendModel : function(Model) {
-        _.extend(Model.prototype, {
+	extendModel : function(Model) {
+		_.extend(Model.prototype, {});
+		return Model;
+	},
 
-        });
-        // end extend
-
-        return Model;
-    },
-
-    extendCollection : function(Collection) {
-        _.extend(Collection.prototype, {
-
-        });
-        // end extend
-
-        return Collection;
-    }
-}
+	extendCollection : function(Collection) {
+		_.extend(Collection.prototype, {});
+		return Collection;
+	}
+};
