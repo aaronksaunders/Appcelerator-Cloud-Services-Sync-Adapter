@@ -1,8 +1,7 @@
 exports.definition = {
 
     config : {
-        "columns" : {
-        },
+        "columns" : {},
         "defaults" : {},
         "adapter" : {
             "type" : "acs",
