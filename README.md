@@ -47,193 +47,228 @@ aUser.login("testuserone", "password").then(function(_response) {
 ```
 This approach is MUCH cleaner that the old callback approach ,give it a try... the adapter still support both approaches.
 
-===
-This is very early hacking, late night work with lots of help and insight from Russ and the Alloy Team.
-Doing this work to better familiarize myself with the platform and get stuff done quicker, faster and 
-better for my clients.
+
+Using the Adapter with Appcelerator Cloud Services Objects
+-
+Creating an object, works just like the books demo provided; here is using the ACS Place object, see the Appcelerator Cloud Service documentation to ensure the proper naming of the properties
+
+First lets look at the changes I made to the model JSON file, `app/models/place.js` this is for the places object
+```Javascript
+{
+    "columns": {},
+    "defaults": {},
+    "adapter": {
+        "type": "acs",
+    },
+    "settings": {
+        "object_name": "places", // <-- MUST BE SET TO ACS OBJECT
+        "object_method": "Places"
+    }
+}
+```
+and this is for the user object `app/models/user.js`, make the appropriate edits.
+```Javascript
+{
+    "columns": {},
+    "defaults": {},
+    "adapter": {
+        "type": "acs",
+    },
+    "settings": {
+        "object_name": "users", // <-- MUST BE SET TO ACS OBJECT
+        "object_method": "Users"
+    }
+}
+```	
+If you notice, **the main change to the models file is setting the adapter to acs and then specifying the object name**. I know there is a 
+cleaner way to do this, ie derive it from the file name, but this is an acceptable solution that provide clear self documentation; I will get to that later
 
 
-simple stuff, login a user
-
-    // create a user
-    var aUser = Alloy.createModel('User');
-
-    // pass in username and password
-    aUser.login("testuserone", "password", {
-	    success : function(_user) {
-		
-		    // user model is returned
-		    Ti.API.info(' SUCCESS ' + JSON.stringify(_user));
-		    Ti.API.info(' model username ' + _user.get("username"));
-
-            // access to session information
-		    Ti.API.info(' stored session ' + _user.retrieveStoredSession());
-	    },
-	    error : function(_error) {
-		    Ti.API.error(' ERROR ' + _error);
-	    }
-    });
-
-
-creating an object, works just like the books demo provided; here is using the ACS Place object
-
-First lets look at the changes I made to the model JSON file, this is for the places object
-
-	{
-	    "columns": {
-	        "active": "boolean"
-	    },
-	    "defaults": {},
-	    "adapter": {
-	        "type": "acs",
-	    },
-	    "settings": {
-	        "object_name": "places", 
-	        "object_method": "Places"
-	    }
-
-	}
-
-and this is for the user object
-
-	{
-	    "columns": {
-	        "active": "boolean"
-	    },
-	    "defaults": {},
-	    "adapter": {
-	        "type": "acs",
-	    },
-	    "settings": {
-	        "object_name": "users", // <-- MUST BE SET TO ACS OBJECT
-	        "object_method": "Users"
-	    }
-	}
+And finally this is how it works when creating a `Place` object in Appcelerator Cloud Services
 	
-if you notice, the *main edit is setting the adapter to acs and then specifying the object name*. I know there is a 
-cleaner way to do this, ie derive it from the file name, but this is just me hacking!! I will get to that later
+```Javascript	
+// See Appcelerator Cloud Services documentation for the appropriate parameters
+// for the object you are trying to create
+var params = {
+	"name" : "Appcelerator Cloud Services",
+	"created_at" : "2011-03-22T21:12:14+0000",
+	"updated_at" : "2011-03-22T21:12:14+0000",
+	"address" : "58 South Park Ave.",
+	"city" : "San Francisco",
+	"state" : "California",
+	"postal_code" : "94107-1807",
+	"country" : "United States",
+	"website" : "http://www.appcelerator.com",
+	"twitter" : "acs",
+	"lat" : 37.782227,
+	"lng" : -122.393159
+}
 
 
-And finally this is how it works...
+function testPlaces() {
 	
+	var aPlace, places;
+	
+	// create a place object
+	aPlace = Alloy.createModel('Place', params);
+	// save the object
+	aPlace.save();
+	
+	// create a collection
+	places = Alloy.createCollection('Place');
+	
+	
+	// fetch the data
+	places.fetch().then(function(_places){
+		Ti.API.info(' places...' + JSON.stringify(_places));
+	}, function(_error){
+		Ti.API.error(' places...' + JSON.stringify(_error));
+	})
+
+
+	// can also fetch individual item
+	aPlace = Alloy.createModel('Place', {
+		id : "SPECIFY PLACE ID"
+	});
+	aPlace.fetch().then(function(_place){
+		Ti.API.info(' place...' + JSON.stringify(_place));
+	}, function(_error){
+		Ti.API.error(' places...' + JSON.stringify(_error));
+	})
+}
+```
+
+The Sync Adapter
+-
+You are going to want to hop on over to `app/assets/alloy/sync/acs.js` to see the beginnings of the code for the adapter
+
+The sync adapter leverage the fact that for the most part the [Appcelerator Cloud Services `ti.cloud` module](http://docs.appcelerator.com/titanium/latest/#!/api/Titanium.Cloud) follows a specific pattern when working with objects:
+
+`Cloud.[OBJECT-NAME].[OBJECT-ACTION]`
+
+So for working with the `User` Object `OBJECT-NAME=Users` and `OBJECT-ACTION=create` gives us the function call:
+
+`Cloud.Users.create`
+
+Which mean that for working with the `Place` Object `OBJECT-NAME=Places` and `OBJECT-ACTION=create` gives us the function call:
+
+`Cloud.Places.create`
+
+This makes it possible to normalize the functionality in the sync adapter into a few specific patterns to meet our needs for performing the basic CRUD Actions on Appcelerator Cloud Services Objects.
+
+####Extending Appcelerator Cloud Services Alloy Objects in the Sync Adapter
+
+The code for the `User` model is more interesting since I needed to extend the object to support all of the 
+special case methods that the user object supports. Using the pattern of extending Backbone objects, Alloy allows you to add methods to both model and collection to support seperation of concerns, where model functionality is kept in the model.
+
+```Javascript
+/**
+ *
+ * @param {Object} _login username or email address
+ * @param {Object} _password password
+ * @param {Object} _opts aadditional options to pass to function, used with callback
+ */
+function login(_login, _password, _opts) {
+	var self = this;
+	var deferred = Q.defer();
+
+	_opts = _opts || {};
+
+	this.config.Cloud.Users.login({
+		login : _login,
+		password : _password
+	}, function(e) {
+		if (e.success) {
+			var user = e.users[0];
+			Ti.API.debug('Logged in! You are now logged in as ' + user.id);
+
+			// save session id
+			Ti.App.Properties.setString('sessionId', e.meta.session_id);
+			var newModel = new model(user);
+			_opts.success && _opts.success(newModel);
+			deferred.resolve(newModel);
+		} else {
+			Ti.API.error(e);
+			_opts.error && _opts.error(self, (e.error && e.message) || e);
+			deferred.reject(e);
+		}
+	});
+	return deferred.promise;
+}
+```
+The basic pattern here is that we are wrapping the [Appcelerator Cloud Services login](http://docs.appcelerator.com/titanium/latest/#!/api/Titanium.Cloud.Users) functionality in the User model and then providing promises support to make working with the Objects much easier.
+
+Notice that to create a user, there is not need for a specific model extension sense the Appcelerator Cloud Services API call for creating objects all follow the same pattern and that is encapsulated in the sync adapter.
+
+```Javascript
+// sample useage in a controller.js file of app
+function testCreateUser() {
 	var params = {
-		"name" : "Appcelerator Cloud Services",
-		"created_at" : "2011-03-22T21:12:14+0000",
-		"updated_at" : "2011-03-22T21:12:14+0000",
-		"address" : "58 South Park Ave.",
-		"city" : "San Francisco",
-		"state" : "California",
-		"postal_code" : "94107-1807",
-		"country" : "United States",
-		"website" : "http://www.appcelerator.com",
-		"twitter" : "acs",
-		"lat" : 37.782227,
-		"lng" : -122.393159
-	}
-	
-	
-	function testPlaces() {
-		
-		var aPlace, places;
-		
-		// create a place object
-		aPlace = Alloy.createModel('Place', params);
-		// save the object
-		aPlace.save();
-		
-		// create a collection
-		places = Alloy.createCollection('Place');
-		
-		// set up a trigger to print out the results when complete
-		places.on("fetch", function() {
-			Ti.API.info(' places...' + JSON.stringify(places));
-		});
-		
-		// fetch the data
-		places.fetch();
+		username : "testusertwo",
+		password : "password",
+		password_confirmation : "password",
+		first_name : "Test",
+		last_name : "UserTwo"
+	};
+	var aUser = Alloy.createModel('User', params);
+	aUser.save().then(function(_user){
+		Ti.API.info(' User...' + JSON.stringify(_user));
+	}, function(_error){
+		Ti.API.error(' User Error...' + JSON.stringify(_error));
+	});
+}
+```
 
 
-		// can also fetch individual item
-		aPlace = Alloy.createModel('Place', {
-			id : "SPECIFY PLACE ID"
-		});
-		aPlace.fetch();
-	}
-	
-You are going to want to hop on over ro app/sync/acs.js to see the beginnings of the code for the adapter
-
-The code for the user model is more interesting since I needed to extend the object to support all of the 
-special case methods that the user object supports
-
-
-	function login(_login, _password, _opts) {
-		var self = this;
-		this.config.Cloud.Users.login({
-			login : _login,
-			password : _password
-		}, function(e) {
-			if (e.success) {
-				var user = e.users[0];
-				Ti.API.info('Logged in! You are now logged in as ' + user.id);
-				
-				// return a newly created user object here!!
-				_opts.success && _opts.success(new model(user));
-			} else {
-				Ti.API.error(e);
-				// sorry.. error message
-				_opts.error && _opts.error((e.error && e.message) || e);
-			}
-		});
-	}
 
 Object Searching and Querying
 -
-So we keep it pretty simple here and pass in the parameters as part of the options in `data` as a hash
+So we keep it pretty simple here and pass in the parameters as part of the options in `data` as a javascript hash
 
-create the user collection like you normally do
 
-    var userCollection = Alloy.createCollection('User');
+```Javascript
+// create the user collection like you normally do
+var userCollection = Alloy.createCollection('User');
+```
 
 Now we do a fetch, but we pass in the query string in as a parameter; we are saying do a full text search on the
-term `UserTwo`
+term `UserTwo` in all `User` objects that are in the database
 
-		userCollection.fetch({
-			data : {
-				q : "UserTwo"
-			},
-			success : function(collection, response) {
-				Ti.API.info('success ' + JSON.stringify(collection));
-			},
-			error : function(collection, response) {
-				Ti.API.error('error ' + JSON.stringify(collection));
-			}
-		});
+```Javascript
+userCollection.fetch({
+	data : {
+		q : "UserTwo"
+	}).then(function(_userCollection){
+		Ti.API.info(' Users...' + JSON.stringify(_userCollection));
+	}, function(_error){
+		Ti.API.error(' User Error...' + JSON.stringify(_error));
+	});
+```
+The function will return a promise that we process the results to get the response from the sync adapter
 
-We pass in a `success` and `error` callback that will give us the `(collection, response)` as results
+Now to use the query capabilities of Appcelerator Cloud Services, create the user collection like you normally do
 
-For
+```Javascript
+var userCollection = Alloy.createCollection('User');
+```
 
-create the user collection like you normally do
+Now we do a fetch, but we pass in the query string in as a parameter; we are saying find all `User` objects with the `last_name` field of `UserTwo`
 
-    var userCollection = Alloy.createCollection('User');
+```Javascript
+userCollection.fetch({
+	data : {
+		where : JSON.stringify({
+			"last_name" : "UserOne"
+		})
+	}).then(function(_userCollection){
+		Ti.API.info(' Users...' + JSON.stringify(_userCollection));
+	}, function(_error){
+		Ti.API.error(' User Error...' + JSON.stringify(_error));
+	});
+```
+The function will return a promise that we process the results to get the response from the sync adapter. **Please note that the `where` parameter is a JSON object that has been converted to a string**. Failure to recognize that will cause you hours of debugging pain and confusion.
 
-Now we do a fetch, but we pass in the query string in as a parameter; we are saying find all users with the  `last_name` field of `UserTwo`
+See the Appcelerator Cloud Services Documention on querying objects to understand all of different possibilities when performing queries against Appcelerator Cloud Services Objects. [ACS Query API Overview](http://docs.appcelerator.com/cloud/latest/#!/guide/search_query)
 
-		userCollection.fetch({
-			data : {
-				where : JSON.stringify({
-					"last_name" : "UserOne"
-				})
-			},
-			success : function(collection, response) {
-				Ti.API.info('success ' + JSON.stringify(collection));
-			},
-			error : function(collection, response) {
-				Ti.API.error('error ' + JSON.stringify(collection));
-			}
-		});
-
-We pass in a `success` and `error` callback that will give us the `(collection, response)` as results which is the same as the previous example. Please note that the `where` parameter is a JSON object that has been converted 
-to a string
 
 The rest of the model follows the same path; check it out and tell me what you think
