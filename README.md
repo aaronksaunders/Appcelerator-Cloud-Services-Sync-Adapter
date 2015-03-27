@@ -250,7 +250,8 @@ function testCreateUser() {
 * You add  the `alloy\sync\acs.js` file to the `lib` folder also, be sure to create the complete folder path.
 * You will need to update your `alloy.js` file to support the models and collections returning the promise from the sync adapter, see `line 10` and `line 36` where we return the result from the sync adapter
 
-The new changes to `alloy.js`, add the lines below to the file
+The new changes to `alloy.js`, add the lines below to the file.
+_When this fix actually makes it to the master release, you will no longer need to patch the Collection and Model objects in Alloy: [ALOY-1174 - Update sync adapters to support promises in addition to callbacks](https://jira.appcelerator.org/browse/ALOY-1174)_
 
 ```javascript
 Alloy.C = function(name, modelDesc, model) {
