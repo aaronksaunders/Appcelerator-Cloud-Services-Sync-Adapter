@@ -158,7 +158,7 @@ The Sync Adapter
 -
 You are going to want to hop on over to `app/assets/alloy/sync/acs.js` to see the beginnings of the code for the adapter
 
-The sync adapter leverage the fact that for the most part the [Appcelerator Cloud Services `ti.cloud` module](http://docs.appcelerator.com/titanium/latest/#!/api/Titanium.Cloud) follows a specific pattern when working with objects:
+The sync adapter leverages the fact that for the most part the [Appcelerator Cloud Services `ti.cloud` module](http://docs.appcelerator.com/titanium/latest/#!/api/Titanium.Cloud) follows a specific pattern when working with objects:
 
 `Cloud.[OBJECT-NAME].[OBJECT-ACTION]`
 
@@ -177,6 +177,8 @@ This makes it possible to normalize the functionality in the sync adapter into a
 The code for the `User` model is more interesting since I needed to extend the object to support all of the 
 special case methods that the user object supports. Using the pattern of extending Backbone objects, Alloy allows you to add methods to both model and collection to support seperation of concerns, where model functionality is kept in the model.
 
+In the code example below you can see how the `login` function is created in the `app/models/user.js` file. Added functions are exposed through the extending of the original Alloy Backbone object.
+
 ```Javascript
 /**
  *
@@ -184,7 +186,7 @@ special case methods that the user object supports. Using the pattern of extendi
  * @param {Object} _password password
  * @param {Object} _opts aadditional options to pass to function, used with callback
  */
-function login(_login, _password, _opts) {
+function _login(_login, _password, _opts) {
 	var self = this;
 	var deferred = Q.defer();
 
@@ -212,6 +214,14 @@ function login(_login, _password, _opts) {
 	return deferred.promise;
 }
 ```
+This function is then exposed using a code similar to the listing below:
+```Javascript
+_.extend(Model.prototype, {
+	login : _login, // expose the login function..
+});
+```
+See additional documentation here [Extending the Backbone.Model Class](http://docs.appcelerator.com/titanium/latest/#!/guide/Alloy_Collection_and_Model_Objects-section-36739589_AlloyCollectionandModelObjects-ExtendingtheBackbone.ModelClass)
+
 The basic pattern here is that we are wrapping the [Appcelerator Cloud Services login](http://docs.appcelerator.com/titanium/latest/#!/api/Titanium.Cloud.Users) functionality in the User model and then providing promises support to make working with the Objects much easier.
 
 Notice that to create a user, there is not need for a specific model extension sense the Appcelerator Cloud Services API call for creating objects all follow the same pattern and that is encapsulated in the sync adapter.
