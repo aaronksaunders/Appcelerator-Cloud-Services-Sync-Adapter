@@ -39,7 +39,7 @@ function Sync(method, model, opts) {
 			if (e.success) {
 				model.meta = e.meta;
 				opts.success && opts.success(e[object_name][0]), model.trigger("fetch");
-				deferred.resolve(e[object_name][0]);
+				deferred.resolve(model);
 				return;
 			}
 			Ti.API.error(e);
@@ -48,6 +48,7 @@ function Sync(method, model, opts) {
 		});
 		break;
 	case "read":
+		//debugger;
 		var id_name = object_name.replace(/s+$/, "") + "_id",
 		    params = {};
 		params[id_name] = model.id = opts.id || model.id;
@@ -85,8 +86,8 @@ function Sync(method, model, opts) {
 			if (e.success) {
 				model.meta = e.meta;
 				opts.success && opts.success(e[object_name][0]), model.trigger("fetch");
-				return deferred.resolve(e[object_name][0]);
-				
+				return deferred.resolve(model);
+
 			}
 			Ti.API.error(e);
 			opts.error && opts.error(e.error && e.message || e);
@@ -122,6 +123,7 @@ function Sync(method, model, opts) {
 			}
 		});
 	}
+
 	return deferred.promise;
 }
 
@@ -136,12 +138,12 @@ function getObject(_model, _opts, _deferred) {
 			if (_model.id) {
 				_model.meta = e.meta;
 				_opts.success && _opts.success(e[object_name][0]), _model.trigger("fetch");
-				return deferred.resolve(e[object_name][0]);
+				return _deferred.resolve(_model);
 			}
 		} else {
 			Ti.API.error(e);
 			_opts.error && _opts.error(e.error && e.message || e);
-			return deferred.reject(e);
+			return _deferred.reject(e);
 		}
 	});
 }
@@ -162,7 +164,7 @@ function getObjects(_model, _opts, _deferred) {
 			}
 			_model.meta = e.meta;
 			_opts.success && _opts.success(retArray), _model.trigger("fetch");
-			return _deferred.resolve(retArray);
+			return _deferred.resolve( _model);
 		} else {
 			Ti.API.error(e);
 			_opts.error && _opts.error(e.error && e.message || e);
@@ -187,8 +189,9 @@ function searchObjects(_model, _opts, _deferred) {
 			}
 			_model.meta = e.meta;
 			_opts.success && _opts.success(retArray), _model.trigger("fetch");
-			return _deferred.resolve(e[object_name][0]);
 			
+			return _deferred.resolve( _model);
+
 		} else {
 			Ti.API.error(e);
 			_opts.error && _opts.error(e.error && e.message || e);
