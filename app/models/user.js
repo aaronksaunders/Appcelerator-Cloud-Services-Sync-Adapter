@@ -74,6 +74,52 @@ exports.definition = {
 			return this.config.Cloud.sessionId;
 		}
 
+		function createAccount(_userInfo, _callback) {
+			var cloud = this.config.Cloud;
+			var TAP = Ti.App.Properties;
+
+			var deferred = Q.defer();
+
+			// bad data so return to caller
+			if (!_userInfo) {
+				_callback && _callback({
+					success : false,
+					model : null
+				});
+			} else {
+				cloud.Users.create(_userInfo, function(e) {
+					if (e.success) {
+						var user = e.users[0];
+						TAP.setString("sessionId", e.meta.session_id);
+						TAP.setString("user", JSON.stringify(user));
+
+						// set this for ACS to track session connected
+						cloud.sessionId = e.meta.session_id;
+
+						// callback with newly created user
+						var newModel = new model(user);
+						_callback && _callback({
+							success : true,
+							model : newModel
+						});
+
+						deferred.resolve(newModel);
+					} else {
+						Ti.API.error(e);
+						_callback && _callback({
+							success : false,
+							model : null,
+							error : e
+						});
+
+						deferred.reject(e);
+					}
+				});
+
+			}
+			return deferred.promise;
+		}
+
 		/**
 		 *
 		 * @param {Object} _login
@@ -133,6 +179,9 @@ exports.definition = {
 			retrieveStoredSession : retrieveStoredSession,
 			hasStoredSession : hasStoredSession,
 			authenticated : authenticated,
+			getCurrentLocation : require('utilities').getCurrentLocation,
+			reverseGeocoder : require('utilities').reverseGeocoder,
+			createAccount : createAccount
 		});
 		// end extend
 
