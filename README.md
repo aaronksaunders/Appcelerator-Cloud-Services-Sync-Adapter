@@ -74,6 +74,7 @@ exports.definition = {
     "adapter": {
         "type": "acs",
     },
+    "debug": true,
     "settings": {
         "object_name": "users", // <-- MUST BE SET TO ACS OBJECT
         "object_method": "Users"
@@ -89,6 +90,7 @@ exports.definition = {
     "adapter": {
         "type": "acs",
     },
+    "debug": true,
     "settings": {
         "object_name": "book",
         "object_method": "Objects" //<--indicates a Custom ACS object
