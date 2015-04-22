@@ -7,7 +7,7 @@ function guid() {
 }
 
 function InitAdapter(config) {
-	Cloud = require("ti.cloud"), Cloud.debug = !0, config.Cloud =
+	Cloud = require("ti.cloud"), Cloud.debug = config.debug, config.Cloud =
 	Cloud;
 }
 
@@ -20,7 +20,8 @@ function Sync(method, model, opts) {
 	    data = model.config.data,
 	    object_name = model.config.settings.object_name,
 	    object_method = Cloud[model.config.settings.object_method];
-	Ti.API.debug("method " + method);
+	
+	if(model.config.debug) Ti.API.debug("method " + method);
 
 	var deferred = Q.defer();
 
@@ -72,7 +73,7 @@ function Sync(method, model, opts) {
 		}
 		break;
 	case "update":
-		Ti.API.debug(' updating object with id ' + model.id);
+		if(model.config.debug) Ti.API.debug(' updating object with id ' + model.id);
 
 		var params = {};
 		// if custom object then set the classname in params variable
@@ -141,7 +142,7 @@ function getObject(_model, _opts, _deferred) {
 	    object_method = Cloud[_model.config.settings.object_method];
 	// if this is a custom object then I need to provide the classname
 
-	Ti.API.debug(" searching for object id " + JSON.stringify(_opts.data));
+	if(_model.config.debug) Ti.API.debug(" searching for object id " + JSON.stringify(_opts.data));
 	object_method.show(_opts.data, function(e) {
 		if (e.success) {
 			if (_model.id) {
@@ -164,7 +165,7 @@ function getObjects(_model, _opts, _deferred) {
 		!_opts.data ? _opts.data = {} : _opts.data;
 		_opts.data['classname'] = object_name;
 	}
-	Ti.API.debug(" querying for all objects of type " + _model.config.settings.object_name + " " + (_opts.data && _opts.data.q));
+	if(_model.config.debug) Ti.API.debug(" querying for all objects of type " + _model.config.settings.object_name + " " + (_opts.data && _opts.data.q));
 	object_method.query((_opts.data || {}), function(e) {
 		if (e.success) {
 			var retArray = [];
@@ -189,7 +190,7 @@ function searchObjects(_model, _opts, _deferred) {
 		!_opts.data ? _opts.data = {} : _opts.data;
 		_opts.data['classname'] = object_name;
 	}
-	Ti.API.debug(" searching for all objects of type " + _model.config.settings.object_name + " " + _opts.data.q);
+	if(_model.config.debug) Ti.API.debug(" searching for all objects of type " + _model.config.settings.object_name + " " + _opts.data.q);
 	object_method.search(_opts.data, function(e) {
 		if (e.success) {
 			var retArray = [];

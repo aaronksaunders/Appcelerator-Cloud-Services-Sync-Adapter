@@ -5,6 +5,7 @@ exports.definition = {
 		"adapter" : {
 			"type" : "acs",
 		},
+		"debug": true,
 		"settings" : {
 			"object_name" : "users",
 			"object_method" : "Users"
