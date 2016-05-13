@@ -158,7 +158,7 @@ function testPlaces() {
 
 The Sync Adapter
 -
-You are going to want to hop on over to `app/assets/alloy/sync/acs.js` to see the beginnings of the code for the adapter
+You are going to want to hop on over to `app/lib/alloy/sync/arrowdb.js` to see the beginnings of the code for the adapter
 
 The sync adapter leverages the fact that for the most part the [Appcelerator Cloud Services `ti.cloud` module](http://docs.appcelerator.com/titanium/latest/#!/api/Titanium.Cloud) follows a specific pattern when working with objects:
 
@@ -246,10 +246,10 @@ function testCreateUser() {
 	});
 }
 ```
-####Additional Changes Required for Promise Support and proper file placement
+####Additional Changes Required for Promise Support and proper file installation
 
-* You will need to include the [$q javascript library](https://github.com/kriskowal/q/blob/v1/README.md) in your project. I suggest you create a `lib` folder in the `app` directory and add the file there.
-* You add  the `alloy\sync\acs.js` file to the `lib` folder also, be sure to create the complete folder path.
+* You will need to include the [$q javascript library](https://github.com/kriskowal/q/blob/v1/README.md) in your project. I suggest you create a `lib` folder in the `app` directory and add the file there, at the root.
+* You add  the `app/alloy/sync/arrowdb.js` file to your `app/alloy/sync` folder also.
 * You will need to update your `alloy.js` file to support the models and collections returning the promise from the sync adapter, see `line 10` and `line 36` where we return the result from the sync adapter
 
 The new changes to `alloy.js`, add the lines below to the file.
