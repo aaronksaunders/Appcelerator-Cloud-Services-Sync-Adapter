@@ -115,6 +115,18 @@ userCollection.fetch({
 	});
 ```
 
+Any extra parameters you could normally use while using any function provided by the API `query()`, `create()`... are usable if you pass them alongside the Model data like:
+```Javascript
+var object = Alloy.createModel('CustomObject', {
+	photo_id: "foo"
+});
+object.save().then(function(model){
+	// success
+}, function(_error){
+	// error
+});
+```
+
 If you notice, **the main change to the models file is setting the adapter to acs and then specifying the object name**. I know there is a 
 cleaner way to do this, ie derive it from the file name, but this is an acceptable solution that provide clear self documentation; I will get to that later
 
