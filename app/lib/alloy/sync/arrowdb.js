@@ -20,7 +20,7 @@ function Sync(method, model, opts) {
 	    data = model.config.data,
 	    object_name = model.config.settings.object_name,
 	    object_method = Cloud[model.config.settings.object_method];
-	
+
 	if(model.config.debug) Ti.API.debug("method " + method);
 
 	var deferred = Q.defer();
@@ -142,6 +142,9 @@ function getObject(_model, _opts, _deferred) {
 	    object_method = Cloud[_model.config.settings.object_method];
 	// if this is a custom object then I need to provide the classname
 
+	if (!_opts.data['response_json_depth'] && _model.config.settings.response_json_depth) {
+		_opts.data['response_json_depth'] = _model.config.settings.response_json_depth;
+	}
 	if(_model.config.debug) Ti.API.debug(" searching for object id " + JSON.stringify(_opts.data));
 	object_method.show(_opts.data, function(e) {
 		if (e.success) {
@@ -164,6 +167,10 @@ function getObjects(_model, _opts, _deferred) {
 	if (_model.config.settings.object_method === "Objects") {
 		!_opts.data ? _opts.data = {} : _opts.data;
 		_opts.data['classname'] = object_name;
+	}
+
+	if (!_opts.data['response_json_depth'] && _model.config.settings.response_json_depth) {
+		_opts.data['response_json_depth'] = _model.config.settings.response_json_depth;
 	}
 	if(_model.config.debug) Ti.API.debug(" querying for all objects of type " + _model.config.settings.object_name + " " + (_opts.data && _opts.data.q));
 	object_method.query((_opts.data || {}), function(e) {

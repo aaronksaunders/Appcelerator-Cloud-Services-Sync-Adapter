@@ -77,7 +77,8 @@ exports.definition = {
     "debug": true,
     "settings": {
         "object_name": "users", // <-- MUST BE SET TO ACS OBJECT
-        "object_method": "Users"
+        "object_method": "Users",
+        "response_json_depth": 3 // <-- OPTIONAL BUT APPLY TO ALL QUERIES
     }
 }
 ```	
@@ -98,6 +99,22 @@ exports.definition = {
     }
 }
 ```
+
+As you can see we support a setting on the Model itself called `response_json_depth`. This is basically to tell the API how many levels within the model's attributes you want to see when you'll be retrieving it from ArrowDB.
+Documentation available [here](http://docs.appcelerator.com/arrowdb/latest/#!/api/CustomObjects-method-create) and [Stockoverflow question](http://stackoverflow.com/questions/34943739/arrowdb-dashboard-upload-photo-to-user) where the behaviour of that parameter is explained.
+This parameter can be set at **two** levels, at the Model level for all the potential queries you'll make for a specific model as demonstrated above, or when you `fetch()` your Collection using:
+```Javascript
+userCollection.fetch({
+	data : {
+		where : JSON.stringify({ "foo": bar }),
+		response_json_depth: 5
+	}).then(function(_userCollection){
+		Ti.API.info(' Users...' + JSON.stringify(_userCollection));
+	}, function(_error){
+		Ti.API.error(' User Error...' + JSON.stringify(_error));
+	});
+```
+
 If you notice, **the main change to the models file is setting the adapter to acs and then specifying the object name**. I know there is a 
 cleaner way to do this, ie derive it from the file name, but this is an acceptable solution that provide clear self documentation; I will get to that later
 
